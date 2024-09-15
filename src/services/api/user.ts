@@ -1,34 +1,33 @@
 import { apiConfig } from '../../boot/apiConfig';
 import {
   // APIs
-  UsersApi,
+  DefaultApi,
   // Models
-  UserResponse,
-  CreateUserRequest,
-  UpdateUserRequest,
+  RegisterRequest,
+  ResponseUser,
 } from '../../../schemas/generated-api';
 
-export type { UserResponse, UsersApi };
+export type { ResponseUser };
 
 export default {
-  createUser(user: CreateUserRequest) {
-    const userApi = new UsersApi(apiConfig);
-    return userApi.createUserUsersCreatePost({ createUserRequest: user });
+  createUser(user: RegisterRequest) {
+    const userApi = new DefaultApi(apiConfig);
+    return userApi.registerUserRegisterPost({ registerRequest: user });
   },
-  getUsers() {
-    const userApi = new UsersApi(apiConfig);
-    return userApi.getAllUsersUsersGet();
-  },
-  getUser(userId: number) {
-    const userApi = new UsersApi(apiConfig);
-    return userApi.getUserByIdUsersUserIdGet({ userId });
-  },
-  updateUser(userId: number, updateUserRequest: UpdateUserRequest) {
-    const userApi = new UsersApi(apiConfig);
-    return userApi.updateUserUsersUserIdPut({ userId, updateUserRequest });
-  },
-  deleteUser(userId: number) {
-    const userApi = new UsersApi(apiConfig);
-    return userApi.deleteUserUsersUserIdDelete({ userId });
-  },
+  // getUsers() {
+  //   const userApi = new UsersApi(apiConfig);
+  //   return userApi.getAllUsersUsersGet();
+  // },
+  // getUser(userId: number) {
+  //   const userApi = new UsersApi(apiConfig);
+  //   return userApi.getUserByIdUsersUserIdGet({ userId });
+  // },
+  // updateUser(userId: number, updateUserRequest: UpdateUserRequest) {
+  //   const userApi = new UsersApi(apiConfig);
+  //   return userApi.updateUserUsersUserIdPut({ userId, updateUserRequest });
+  // },
+  // deleteUser(userId: number) {
+  //   const userApi = new UsersApi(apiConfig);
+  //   return userApi.deleteUserUsersUserIdDelete({ userId });
+  // },
 };

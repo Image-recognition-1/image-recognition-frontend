@@ -1,23 +1,23 @@
-// import { forbidAuthenticated, forbidUnauthenticated } from 'src/router/navigationGuard';
+import { forbidAuthenticated, forbidUnauthenticated } from 'src/router/navigationGuard';
 import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    // beforeEnter: forbidUnauthenticated,
+    beforeEnter: forbidUnauthenticated,
     redirect: { name: 'HomePage' },
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {
         path: '/home',
         name: 'HomePage',
-        // beforeEnter: forbidUnauthenticated,
+        beforeEnter: forbidUnauthenticated,
         component: () => import('pages/IndexPage.vue'),
       },
       {
         path: '/profile',
         name: 'ProfilePage',
-        // beforeEnter: forbidUnauthenticated,
+        beforeEnter: forbidUnauthenticated,
         component: () => import('pages/ProfilePage.vue'),
       },
     ],
@@ -29,13 +29,13 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'login',
         name: 'LoginPage',
-        // beforeEnter: forbidAuthenticated,
+        beforeEnter: forbidAuthenticated,
         component: () => import('pages/LoginPage.vue'),
       },
       {
         path: 'register',
         name: 'RegisterPage',
-        // beforeEnter: forbidAuthenticated,
+        beforeEnter: forbidAuthenticated,
         component: () => import('pages/RegisterPage.vue'),
       },
     ],

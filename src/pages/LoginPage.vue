@@ -28,7 +28,7 @@
                 rounded
                 v-model="formStateLogin.password"
                 type="password"
-                label="Password"
+                label="Lozinka"
                 :rules="[required, password]">
                 <template v-slot:prepend>
                   <q-icon name="lock" />
@@ -69,11 +69,9 @@
 import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Notify } from 'quasar';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from 'src/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
 import { useUserStore } from 'src/stores/UserStore';
 import { useValidation } from 'src/composables';
+import { authApi } from 'src/services/api';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -90,33 +88,19 @@ const submitForm = async () => {
   try {
     isSubmitting.value = true;
 
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      formStateLogin.value.email,
-      formStateLogin.value.password,
-    );
+    await authApi.login({
+      username: formStateLogin.value.email,
+      password: formStateLogin.value.password,
+    });
 
-    const userDocRef = doc(db, 'users', userCredential.user.uid);
-    const userDoc = await getDoc(userDocRef);
-
-    if (userDoc.exists()) {
-      const userData = userDoc.data();
-
-      userStore.setCurrentUser({
-        uid: userCredential.user.uid,
-        email: userCredential.user.email || '',
-        username: userData.username,
-        fullName: userData.fullName,
-        role: userData.role || 'user',
-        disabled: userData.disabled || false,
-      });
-    }
+    const response = await authApi.getMe();
+    userStore.setCurrentUser(response);
 
     router.push({ name: 'HomePage' });
   } catch (error) {
     Notify.create({
       type: 'negative',
-      message: 'Invalid email or password. Please try again.',
+      message: 'Netočni podaci za prijavu.',
     });
   } finally {
     isSubmitting.value = false;

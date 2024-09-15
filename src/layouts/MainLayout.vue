@@ -10,7 +10,6 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-
         <q-toolbar-title>
           Prepoznavanje objekata na slici
         </q-toolbar-title>
@@ -23,7 +22,7 @@
           {{ userStore.currentUser.fullName }}
           <q-avatar class="q-ml-sm" rounded>
               <q-img
-                  :src="'https://i.pravatar.cc/300?img=' + 1"
+                  :src="'https://i.pravatar.cc/300'"
                   :img-style="{ border: '2px solid #FFF', borderRadius: '50%' }"
               />
           </q-avatar>
@@ -35,7 +34,7 @@
               <q-card flat class="bg-transparent text-white">
                   <q-card-section>
                       <q-img
-                          :src="'https://i.pravatar.cc/300?img=' + 1"
+                          :src="'https://i.pravatar.cc/300'"
                           class="q-mb-md"
                       />
                       <strong>{{ 'uid' }}:</strong>
@@ -88,7 +87,7 @@
           <q-item-section avatar>
               <q-avatar rounded>
                   <q-img
-                      :src="'https://i.pravatar.cc/300?img=' + 1"
+                      :src="'https://i.pravatar.cc/300'"
                       :img-style="{ border: '1px solid #000', borderRadius: '50%' }"
                   />
               </q-avatar>
@@ -107,10 +106,13 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref } from 'vue';
-import { authApi } from 'src/services/api';
+import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { Notify } from 'quasar';
+import { signOut } from 'firebase/auth';
+import { auth } from 'src/firebaseConfig';
 import { useUserStore } from 'src/stores/UserStore';
+import { authApi } from 'src/services/api';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -125,9 +127,22 @@ const setMenuItems = () => {
 setMenuItems();
 
 const logout = async () => {
-  await authApi.logout();
-  userStore.clearCurrentUser();
-  router.push({ name: 'LoginPage' });
+  try {
+    await signOut(auth);
+
+    await authApi.logout();
+
+    userStore.clearCurrentUser();
+
+    Notify.create({
+      type: 'positive',
+      message: 'Uspješno ste se odjavili.',
+    });
+
+    router.push({ name: 'LoginPage' });
+  } catch (error) {
+    //
+  }
 };
 
 const leftDrawerOpen = ref(false);

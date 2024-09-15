@@ -1,24 +1,22 @@
 import { apiConfig } from '../../boot/apiConfig';
-import {
-  AuthApi, LoginAuthTokenPostRequest, UsersApi, CreateUserRequest,
-} from '../../../schemas/generated-api';
+import { LoginLoginPostRequest, DefaultApi, RegisterRequest } from '../../../schemas/generated-api';
 
 export default {
-  login(requestParams: LoginAuthTokenPostRequest) {
-    const authApi = new AuthApi(apiConfig);
-    return authApi.loginAuthTokenPost(requestParams);
+  login(requestParams: LoginLoginPostRequest) {
+    const authApi = new DefaultApi(apiConfig);
+    return authApi.loginLoginPost(requestParams);
   },
-  register(createUserRequest: CreateUserRequest) {
-    const usersApi = new UsersApi(apiConfig);
-    return usersApi.createUserUsersCreatePost({ createUserRequest });
+  register(registerRequest: RegisterRequest) {
+    const usersApi = new DefaultApi(apiConfig);
+    return usersApi.registerUserRegisterPost({ registerRequest });
   },
 
-  logout() {
-    const authApi = new AuthApi(apiConfig);
-    return authApi.logoutAuthLogoutGet();
-  },
   getMe() {
-    const authApi = new AuthApi(apiConfig);
-    return authApi.readUsersMeAuthGetMeGet();
+    const authApi = new DefaultApi(apiConfig);
+    return authApi.getMeGetmeGet();
+  },
+  logout() {
+    const authApi = new DefaultApi(apiConfig);
+    return authApi.logoutLogoutGet();
   },
 };

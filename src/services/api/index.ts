@@ -1,10 +1,9 @@
 import authApi from 'src/services/api/auth';
 
-import userApi, { UserResponse, UsersApi } from 'src/services/api/user';
+import userApi, { ResponseUser } from 'src/services/api/user';
 
-export type {
-  UserResponse, UsersApi,
-};
+export type { ResponseUser };
+
 export {
   authApi,
   userApi,
