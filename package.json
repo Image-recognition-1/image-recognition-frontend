@@ -1,0 +1,50 @@
+{
+  "name": "image-recognition",
+  "version": "0.0.1",
+  "description": "Tracking information about airline flights",
+  "productName": "Quasar App",
+  "author": "Mateo <mateo.zulj11@gmail.com>",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.ts,.vue ./",
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "apiclean": "rimraf schemas/generated-api",
+    "apigen-only": "openapi-generator-cli generate -i ./schemas/api-specification.json -o ./schemas/generated-api -g typescript-fetch --skip-validate-spec",
+    "apigen": "run-s apiclean apigen-only"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.4",
+    "dotenv": "^16.4.5",
+    "lodash": "^4.17.21",
+    "moment": "^2.30.1",
+    "pinia": "^2.1.7",
+    "quasar": "^2.16.0",
+    "vue": "^3.4.18",
+    "vue-router": "^4.0.12"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.13.4",
+    "@quasar/app-vite": "^1.9.0",
+    "@quasar/cli": "^2.4.1",
+    "@types/lodash": "^4.17.4",
+    "@types/node": "^12.20.21",
+    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/parser": "^5.10.0",
+    "autoprefixer": "^10.4.2",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-vue": "^9.0.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^4.5.4",
+    "vite-plugin-checker": "^0.6.4",
+    "vue-tsc": "^1.8.22"
+  },
+  "engines": {
+    "node": "^20 || ^18 || ^16",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}
