@@ -5,7 +5,7 @@
   >
     <div class="column q-pa-lg">
       <div class="row">
-        <q-card roundeq class="shadow-24" style="width:350px; height:465px;">
+        <q-card rounded class="shadow-24" style="width:350px; height:465px;">
           <q-card-section class="bg-light-blue-7">
             <h4 class="text-h5 text-white q-my-md">Prijava</h4>
             <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
@@ -16,7 +16,7 @@
             <q-form class="q-px-sm q-pt-xl">
               <q-input
               rounded
-              v-model="formStateLogin.username"
+              v-model="formStateLogin.email"
               type="text"
               label="Email"
               :rules="[required, email]">
@@ -43,10 +43,11 @@
               color="blue-4"
               class="full-width text-white"
               label="Prijavi se"
-              :disable="formStateLogin.username === ''
-                || formStateLogin.password === '' || isSubmitting"
-              @click = "submitForm"
-              />
+              :disable="formStateLogin.email === ''
+              || formStateLogin.password === ''
+              || isSubmitting"
+              @click="submitForm"
+            />
           </q-card-actions>
           <q-card-section>
             <div class="text-center">
@@ -68,7 +69,9 @@
 import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Notify } from 'quasar';
-import { authApi, UserResponse } from 'src/services/api';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from 'src/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 import { useUserStore } from 'src/stores/UserStore';
 import { useValidation } from 'src/composables';
 
@@ -79,21 +82,41 @@ const { required, email, password } = useValidation();
 const isSubmitting: Ref<boolean> = ref(false);
 
 const formStateLogin = ref({
-  username: '',
+  email: '',
   password: '',
 });
 
 const submitForm = async () => {
   try {
     isSubmitting.value = true;
-    await authApi.login({ ...formStateLogin.value });
-    const response = await authApi.getMe();
-    userStore.setCurrentUser(response as UserResponse);
+
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      formStateLogin.value.email,
+      formStateLogin.value.password,
+    );
+
+    const userDocRef = doc(db, 'users', userCredential.user.uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+
+      userStore.setCurrentUser({
+        uid: userCredential.user.uid,
+        email: userCredential.user.email || '',
+        username: userData.username,
+        fullName: userData.fullName,
+        role: userData.role || 'user',
+        disabled: userData.disabled || false,
+      });
+    }
+
     router.push({ name: 'HomePage' });
   } catch (error) {
     Notify.create({
       type: 'negative',
-      message: 'Invalid username or password. Please try again.',
+      message: 'Invalid email or password. Please try again.',
     });
   } finally {
     isSubmitting.value = false;
