@@ -23,23 +23,23 @@
           {{ userStore.currentUser.fullName }}
           <q-avatar class="q-ml-sm" rounded>
               <q-img
-                  :src="'https://i.pravatar.cc/300?img=' + userStore.currentUser.id"
+                  :src="'https://i.pravatar.cc/300?img=' + 1"
                   :img-style="{ border: '2px solid #FFF', borderRadius: '50%' }"
               />
           </q-avatar>
           <q-tooltip
-          class="text-body2"
-          :offset="[5, 5]"
-          transition-show="scale"
-          transition-hide="scale">
+            class="text-body2"
+            :offset="[5, 5]"
+            transition-show="scale"
+            transition-hide="scale">
               <q-card flat class="bg-transparent text-white">
                   <q-card-section>
                       <q-img
-                          :src="'https://i.pravatar.cc/300?img=' + (userStore.currentUser.id - 2)"
+                          :src="'https://i.pravatar.cc/300?img=' + 1"
                           class="q-mb-md"
                       />
-                      <strong>{{ 'id' }}:</strong>
-                      {{ userStore.currentUser.id }} <q-space />
+                      <strong>{{ 'uid' }}:</strong>
+                      {{ userStore.currentUser.uid }} <q-space />
                       <strong>{{ 'email'}}:</strong>
                       {{ userStore.currentUser.email }} <q-space />
                       <strong>{{ 'role' }}:</strong>
@@ -88,7 +88,7 @@
           <q-item-section avatar>
               <q-avatar rounded>
                   <q-img
-                      :src="'https://i.pravatar.cc/300?img=' + userStore.currentUser.id"
+                      :src="'https://i.pravatar.cc/300?img=' + 1"
                       :img-style="{ border: '1px solid #000', borderRadius: '50%' }"
                   />
               </q-avatar>

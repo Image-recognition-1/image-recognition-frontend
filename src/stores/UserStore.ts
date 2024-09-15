@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { UserResponse } from 'src/services/api';
 
 const getInitialUser = (): UserResponse => ({
-  id: 0,
+  uid: '',
   username: '',
   email: '',
   fullName: '',

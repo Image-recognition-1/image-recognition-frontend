@@ -15,34 +15,40 @@
           <q-card-section>
             <q-form class="q-px-sm q-pt-xl">
               <q-input
-              dense
-              rounded
-              clearable
-              v-model="formStateReg.fullName" type="text" label="Ime i prezime" :rules="[required]">
+                dense
+                rounded
+                clearable
+                v-model="formStateReg.fullName"
+                type="text"
+                label="Ime i prezime"
+                :rules="[required]"
+              >
                 <template v-slot:prepend>
                   <q-icon name="person" />
                 </template>
               </q-input>
               <q-input
-              dense
-              rounded
-              clearable
-              v-model="formStateReg.email"
-              type="email"
-              label="Email"
-              :rules="[required, email]">
+                dense
+                rounded
+                clearable
+                v-model="formStateReg.email"
+                type="email"
+                label="Email"
+                :rules="[required, email]"
+              >
                 <template v-slot:prepend>
                   <q-icon name="email" />
                 </template>
               </q-input>
               <q-input
-              dense
+                dense
                 rounded
                 clearable
                 v-model="formStateReg.username"
                 type="text"
                 label="Korisničko ime"
-                :rules="[required]">
+                :rules="[required]"
+              >
                 <template v-slot:prepend>
                   <q-icon name="person" />
                 </template>
@@ -54,7 +60,8 @@
                 v-model="formStateReg.password"
                 type="password"
                 label="Lozinka"
-                :rules="[required, password]">
+                :rules="[required, password]"
+              >
                 <template v-slot:prepend>
                   <q-icon name="lock" />
                 </template>
@@ -66,7 +73,8 @@
                 v-model="formStateReg.confirmPassword"
                 type="password"
                 label="Ponovi lozinku"
-                :rules="[required]">
+                :rules="[required]"
+              >
                 <template v-slot:prepend>
                   <q-icon name="lock" />
                 </template>
@@ -80,7 +88,8 @@
               color="teal-4"
               class="full-width text-white"
               label="Registriraj se"
-              @click="submitForm"/>
+              @click="submitForm"
+            />
           </q-card-actions>
           <q-card-section class="text-center q-pa-sm">
             <q-btn
@@ -102,7 +111,9 @@ import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { Notify } from 'quasar';
 import { useValidation } from 'src/composables';
-import { authApi, UserResponse } from 'src/services/api';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from 'src/firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 import { useUserStore } from 'src/stores/UserStore';
 
 const router = useRouter();
@@ -120,20 +131,53 @@ const formStateReg = ref({
 });
 
 const submitForm = async () => {
+  if (formStateReg.value.password !== formStateReg.value.confirmPassword) {
+    Notify.create({
+      type: 'negative',
+      message: 'Lozinke se ne podudaraju.',
+    });
+    return;
+  }
+
   try {
     isSubmitting.value = true;
-    await authApi.register({ ...formStateReg.value });
-    await authApi.login({
+
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      formStateReg.value.email,
+      formStateReg.value.password,
+    );
+    const { user } = userCredential;
+
+    await setDoc(doc(db, 'users', user.uid), {
+      uid: user.uid,
       username: formStateReg.value.username,
-      password: formStateReg.value.password,
+      fullName: formStateReg.value.fullName,
+      email: user.email,
+      role: 'USER',
+      disabled: false,
+      createdAt: new Date().toISOString(),
     });
-    const response = await authApi.getMe();
-    userStore.setCurrentUser(response as UserResponse);
+
+    userStore.setCurrentUser({
+      uid: user.uid,
+      email: user.email || '',
+      username: formStateReg.value.username,
+      fullName: formStateReg.value.fullName,
+      role: 'USER',
+      disabled: false,
+    });
+
     router.push({ name: 'HomePage' });
+
+    Notify.create({
+      type: 'positive',
+      message: 'Registracija uspješna!',
+    });
   } catch (error) {
     Notify.create({
       type: 'negative',
-      message: 'Please try again.',
+      message: 'Došlo je do greške. Pokušajte ponovo.',
     });
   } finally {
     isSubmitting.value = false;

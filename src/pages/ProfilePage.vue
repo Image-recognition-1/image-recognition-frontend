@@ -111,7 +111,7 @@
 <script setup lang="ts">
 import { ref, Ref } from 'vue';
 import { Notify } from 'quasar';
-import { userApi } from 'src/services/api';
+// import { userApi } from 'src/services/api';
 import { useValidation } from 'src/composables';
 import { useUserStore } from 'src/stores/UserStore';
 
@@ -142,15 +142,15 @@ const submitForm = async () => {
     return;
   }
   try {
-    const response = await userApi.updateUser(
-      userStore.currentUser.id,
-      formStateUpdate.value,
-    );
-    userStore.setCurrentUser(response);
-    Notify.create({
-      message: 'Profil uspješno ažuriran',
-      color: 'positive',
-    });
+    // const response = await userApi.updateUser(
+    //   userStore.currentUser.uid,
+    //   formStateUpdate.value,
+    // );
+    // userStore.setCurrentUser(response);
+    // Notify.create({
+    //   message: 'Profil uspješno ažuriran',
+    //   color: 'positive',
+    // });
   } catch (error) {
     Notify.create({
       message: 'Došlo je do pogreške',
