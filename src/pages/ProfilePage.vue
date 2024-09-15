@@ -4,12 +4,12 @@
         <div class="text-h4 q-pl-xl q-mt-md">{{ "Uredi profil" }}</div>
     </div>
     <div class="row justify-center">
-      <q-card rounded class="shadow-20" style="width: 80%;">
+      <q-card rounded class="shadow-11" style="width: 75%;">
       <q-form class="q-pa-md">
         <label class="q-ml-md">Ime i prezime</label>
         <q-input
           class="q-mb-sm"
-          standout
+          outlined
           dense
           clearable
           v-model="formStateUpdate.fullName"
@@ -22,9 +22,9 @@
         </q-input>
         <label class="q-ml-md">Emal</label>
         <q-input
-        class="q-mb-sm"
+          class="q-mb-sm"
           dense
-          standout
+          outlined
           clearable
           v-model="formStateUpdate.email"
           type="email"
@@ -38,7 +38,7 @@
         <q-input
           dense
           class="q-mb-sm"
-          standout
+          outlined
           clearable
           v-model="formStateUpdate.username"
           type="text"
@@ -52,7 +52,7 @@
         <q-input
           dense
           class="q-mb-sm"
-          standout
+          outlined
           clearable
           v-model="formStateUpdate.password"
           type="password"
@@ -66,7 +66,7 @@
         <q-input
           dense
           class="q-mb-sm"
-          standout
+          outlined
           clearable
           v-model="formStateUpdate.confirmPassword"
           type="password"
@@ -80,11 +80,11 @@
         <q-select
           v-model="formStateUpdate.role"
           outlined
-          class="q-mb-md q-px-sm"
+          class="q-mb-md"
           dense
+          :disable="userStore.currentUser.role !== 'ADMIN'"
           options-dense
-          standout="bg-white text-black"
-          :options="['GUEST', 'USER', 'ADMIN', 'SUPERADMIN', ]" />
+          :options="['GUEST', 'USER', 'ADMIN', ]" />
         <q-btn
           dense
           unelevated
