@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header>
       <q-toolbar>
         <q-btn
           flat
@@ -11,7 +11,7 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title>
-          Prepoznavanje objekata na slici
+          Prepoznavanje slike
         </q-toolbar-title>
         <q-btn
         v-if="$q.screen.width > 505"
@@ -48,11 +48,13 @@
           </q-tooltip>
         </q-btn>
         <q-btn
-        color="white"
-        text-color="black"
-        label="LOGOUT"
-        icon="logout"
-        @click="logout" />
+          rounded
+          unelevated
+          color="white"
+          text-color="black"
+          label="LOGOUT"
+          icon="logout"
+          @click="logout" />
       </q-toolbar>
     </q-header>
 

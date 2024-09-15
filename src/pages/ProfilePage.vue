@@ -5,7 +5,7 @@
     </div>
     <div class="row justify-center">
       <q-card rounded class="shadow-11" style="width: 75%;">
-      <q-form class="q-pa-md">
+      <q-form ref="formRef" class="q-pa-md">
         <label class="q-ml-md">Ime i prezime</label>
         <q-input
           class="q-mb-sm"
@@ -92,13 +92,8 @@
           color="primary"
           class="full-width text-white q-my-md"
           label="Spremi promjene"
-          :disable="
-            formStateUpdate.fullName === '' ||
-            formStateUpdate.email === '' ||
-            formStateUpdate.username === '' ||
-            formStateUpdate.password === '' ||
-            isSubmitting
-          "
+          :disable="isSubmitting"
+          :loading="isSubmitting"
           @click="submitForm"
         />
       </q-form>
@@ -110,11 +105,12 @@
 
 <script setup lang="ts">
 import { ref, Ref } from 'vue';
-import { Notify } from 'quasar';
-// import { userApi } from 'src/services/api';
+import { Notify, QForm } from 'quasar';
+import { userApi } from 'src/services/api';
 import { useValidation } from 'src/composables';
 import { useUserStore } from 'src/stores/UserStore';
 
+const formRef: Ref<QForm | null> = ref(null);
 const isSubmitting: Ref<boolean> = ref(false);
 
 const { required, email, password } = useValidation();
@@ -131,7 +127,10 @@ const formStateUpdate = ref({
 });
 
 const submitForm = async () => {
-  isSubmitting.value = true;
+  if (!formRef.value) return;
+
+  const isValid = await formRef.value.validate();
+  if (!isValid) return;
 
   if (formStateUpdate.value.password !== formStateUpdate.value.confirmPassword) {
     Notify.create({
@@ -142,15 +141,17 @@ const submitForm = async () => {
     return;
   }
   try {
-    // const response = await userApi.updateUser(
-    //   userStore.currentUser.uid,
-    //   formStateUpdate.value,
-    // );
-    // userStore.setCurrentUser(response);
-    // Notify.create({
-    //   message: 'Profil uspješno ažuriran',
-    //   color: 'positive',
-    // });
+    isSubmitting.value = true;
+
+    const response = await userApi.updateUser(
+      userStore.currentUser.uid,
+      formStateUpdate.value,
+    );
+    userStore.setCurrentUser(response);
+    Notify.create({
+      message: 'Profil uspješno ažuriran',
+      color: 'positive',
+    });
   } catch (error) {
     Notify.create({
       message: 'Došlo je do pogreške',

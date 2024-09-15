@@ -1,19 +1,23 @@
 <template>
   <q-page
     class="row justify-center items-center"
-    style="background: linear-gradient(#AED4FF, #6FA2FF);"
+    style="background: linear-gradient(
+      135deg, rgba(0,57,166,1) 10%,
+      rgba(224,255,255,1) 30%, rgba(224,255,255,1) 70%, rgba(0,57,166,1) 90%);"
   >
     <div class="column q-pa-lg">
       <div class="row">
-        <q-card rounded class="shadow-24" style="width:350px; height:465px;">
-          <q-card-section class="bg-light-blue-7">
+        <q-card
+          class="shadow-24"
+          style="width:350px; height:465px; border-radius: 10px;">
+          <q-card-section class="bg-blue-7">
             <h4 class="text-h5 text-white q-my-md">Prijava</h4>
             <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
               <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="blue-4" />
             </div>
           </q-card-section>
           <q-card-section>
-            <q-form class="q-px-sm q-pt-xl">
+            <q-form ref="formRef" class="q-px-sm q-pt-xl">
               <q-input
               rounded
               v-model="formStateLogin.email"
@@ -39,6 +43,7 @@
           <q-card-actions class="q-px-lg">
             <q-btn
               unelevated
+              rounded
               size="lg"
               color="blue-4"
               class="full-width text-white"
@@ -46,6 +51,7 @@
               :disable="formStateLogin.email === ''
               || formStateLogin.password === ''
               || isSubmitting"
+              :loading="isSubmitting"
               @click="submitForm"
             />
           </q-card-actions>
@@ -68,7 +74,7 @@
 <script setup lang="ts">
 import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Notify } from 'quasar';
+import { Notify, QForm } from 'quasar';
 import { useUserStore } from 'src/stores/UserStore';
 import { useValidation } from 'src/composables';
 import { authApi } from 'src/services/api';
@@ -76,6 +82,8 @@ import { authApi } from 'src/services/api';
 const router = useRouter();
 const userStore = useUserStore();
 const { required, email, password } = useValidation();
+
+const formRef: Ref<QForm | null> = ref(null);
 
 const isSubmitting: Ref<boolean> = ref(false);
 
@@ -85,6 +93,10 @@ const formStateLogin = ref({
 });
 
 const submitForm = async () => {
+  if (!formRef.value) return;
+
+  const isValid = await formRef.value.validate();
+  if (!isValid) return;
   try {
     isSubmitting.value = true;
 

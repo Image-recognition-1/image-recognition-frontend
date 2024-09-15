@@ -1,15 +1,18 @@
 <template>
   <q-page
     class="row justify-center items-center"
-    style="background: linear-gradient(#00BCD4, #009688);"
+    style="background: linear-gradient(
+      215deg, rgba(0,57,166,1) 10%,
+      rgba(224,255,255,1) 30%, rgba(224,255,255,1) 70%, rgba(0,57,166,1) 90%);"
   >
     <div class="column q-pa-lg">
       <div class="row">
-        <q-card rounded class="shadow-24" style="width:350px; height:610px;">
-          <q-card-section class="bg-teal-7">
+        <q-form ref="formRef">
+        <q-card class="shadow-24" style="width:350px; height:610px; border-radius: 10px;">
+          <q-card-section class="bg-blue-7">
             <h4 class="text-h5 text-white q-my-md">Registracija</h4>
             <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
-              <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="teal-4" />
+              <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="blue-4" />
             </div>
           </q-card-section>
           <q-card-section>
@@ -84,23 +87,26 @@
           <q-card-actions class="q-px-lg">
             <q-btn
               unelevated
+              rounded
               size="lg"
-              color="teal-4"
+              color="blue-4"
               class="full-width text-white"
               label="Registriraj se"
+              :loading="isSubmitting"
               @click="submitForm"
             />
           </q-card-actions>
           <q-card-section class="text-center q-pa-sm">
             <q-btn
               flat
-              color="teal-4"
+              color="blue-4"
               class="mb-sm"
               label="Povratak na prijavu"
               @click="() => router.push({ name: 'LoginPage' })"
             />
           </q-card-section>
         </q-card>
+      </q-form>
       </div>
     </div>
   </q-page>
@@ -109,7 +115,7 @@
 <script setup lang="ts">
 import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Notify } from 'quasar';
+import { Notify, QForm } from 'quasar';
 import { useValidation } from 'src/composables';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from 'src/firebaseConfig';
@@ -119,6 +125,8 @@ import { useUserStore } from 'src/stores/UserStore';
 const router = useRouter();
 const userStore = useUserStore();
 const { required, email, password } = useValidation();
+
+const formRef: Ref<QForm | null> = ref(null);
 
 const isSubmitting: Ref<boolean> = ref(false);
 
@@ -138,6 +146,10 @@ const submitForm = async () => {
     });
     return;
   }
+  if (!formRef.value) return;
+
+  const isValid = await formRef.value.validate();
+  if (!isValid) return;
 
   try {
     isSubmitting.value = true;

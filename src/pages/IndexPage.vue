@@ -1,73 +1,144 @@
 <template>
   <q-page padding>
-    <div class="row justify-between items-center q-mb-md">
-      <div class="text-h4 q-pl-xl">
-        <div class="q-pa-md bg-white" style="border-radius: 10px;">
-          {{ "Učitaj sliku" }}
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-center q-mt-lg">
-      <q-card flat style="max-width: 600px;">
+    <div class="flex flex-center q-my-md" style="min-height: 80vh;">
+      <q-card flat style="max-width: 750px; border-radius: 10px;">
         <q-card-section>
+          <div class="text-h5 text-center">
+              Učitaj sliku
+          </div>
+        </q-card-section>
+        <q-card-section class="q-py-none">
           <q-file
-            v-model="files"
+            v-model="file"
             label="Odaberi sliku"
-            square
             flat
-            counter
+            rounded
             outlined
             use-chips
             clearable
             accept="image/*"
             max-file-size="5120000"
-            @="onFileSelect"
+            @update:model-value="onImageAdded([file as File])"
           >
-          <template v-slot:prepend>
-            <q-icon name="attach_file" />
-          </template>
-        </q-file>
-      </q-card-section>
-       <q-card-section v-if="previewSrc">
-          <div class="row justify-center q-mt-md">
-            <q-img :src="previewSrc" style="max-width: 100%;" />
+            <template v-slot:prepend>
+              <q-icon name="attach_file" />
+            </template>
+          </q-file>
+        </q-card-section>
+        <q-card-section v-if="uploadedImage">
+          <div class="row justify-center q-pa-md">
+            <q-img
+              :src="uploadedImage"
+              style="width: 100%; border-radius: 10px;" />
           </div>
         </q-card-section>
-      <q-card-actions align="center">
-        <q-btn
-          label="Pošalji sliku"
-          color="primary"
-          unelevated
-          @click="uploadImage"
-        />
-      </q-card-actions>
-    </q-card>
+        <q-card-actions align="center">
+          <q-btn
+            label="Pošalji sliku"
+            color="primary"
+            unelevated
+            rounded
+            @click="uploadImage"
+            :disable="!file"
+            :loading="isSubmitting"
+          />
+        </q-card-actions>
+        <q-card-section>
+          <div v-if="!results" class="text-h5 text-center">
+              Rezultati predikcije
+          </div>
+
+          <template v-for="(value, key) in results" :key="key">
+            <div class="row-container">
+              <div class="key-name">{{ key }}
+                <span class="text-weight-bold">{{ (value * 100).toFixed(2) }}%</span>
+              </div>
+              <div class="value-bar">
+                <span
+                  class="bar bg-primary text-warning q-ma-md"
+                  :style="{ width: (value * 100) + '%' }">
+
+                </span>
+              </div>
+            </div>
+          </template>
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { imageApi } from 'src/services/api';
 
-const files = ref<File[]>([]);
-const previewSrc = ref<string | null>(null);
+const file = ref<File | undefined>();
+const uploadedImage = ref<string | null>('src/assets/upload-img.png');
 
-const onFileSelect = (fileList: File[]) => {
-  if (fileList.length > 0) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      previewSrc.value = e.target?.result as string;
-    };
-    reader.readAsDataURL(fileList[0]);
-  } else {
-    previewSrc.value = null;
+const results = ref<{ [key: string]: number }>({});
+
+const onImageAdded = (files: File[]) => {
+  if (!files[0]) {
+    uploadedImage.value = 'src/assets/upload-img.png';
+    results.value = {};
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedImage.value = e.target?.result as string;
+  };
+  if (files[0]) {
+    reader.readAsDataURL(files[0]);
   }
 };
 
-const uploadImage = () => {
-  if (files.value.length > 0) {
-    console.log('Uploading:', files.value[0]);
+const isSubmitting = ref(false);
+const uploadImage = async () => {
+  onImageAdded([file.value as File]);
+  if (file.value) {
+    const formData = new FormData();
+    formData.append('file', file.value);
+
+    isSubmitting.value = true;
+    try {
+      const response = await imageApi.uploadImage(file.value as File);
+      results.value = response;
+    } catch (error) {
+      //
+    } finally {
+      isSubmitting.value = false;
+    }
   }
 };
+
 </script>
+
+<style lang="css" scoped>
+.row-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.key-name {
+  flex-basis: 125px;
+  text-align: left;
+}
+
+.value-bar {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.bar {
+  height: 45px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 10px;
+  color: white;
+}
+
+</style>
