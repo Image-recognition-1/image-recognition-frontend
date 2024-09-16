@@ -1,5 +1,9 @@
 import { apiConfig } from '../../boot/apiConfig';
-import { LoginLoginPostRequest, DefaultApi, RegisterRequest } from '../../../schemas/generated-api';
+import {
+  LoginLoginPostRequest, DefaultApi, RegisterRequest, GoogleLoginRequest,
+} from '../../../schemas/generated-api';
+
+export type { GoogleLoginRequest, RegisterRequest, LoginLoginPostRequest };
 
 export default {
   login(requestParams: LoginLoginPostRequest) {
@@ -7,8 +11,12 @@ export default {
     return authApi.loginLoginPost(requestParams);
   },
   register(registerRequest: RegisterRequest) {
-    const usersApi = new DefaultApi(apiConfig);
-    return usersApi.registerUserRegisterPost({ registerRequest });
+    const authApi = new DefaultApi(apiConfig);
+    return authApi.registerUserRegisterPost({ registerRequest });
+  },
+  googleLogin(googleLoginRequest: GoogleLoginRequest) {
+    const authApi = new DefaultApi(apiConfig);
+    return authApi.googleLoginGoogleLoginPost({ googleLoginRequest });
   },
 
   getMe() {

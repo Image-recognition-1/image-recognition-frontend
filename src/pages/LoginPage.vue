@@ -7,26 +7,26 @@
   >
     <div class="column q-pa-lg">
       <div class="row">
-        <q-card
-          class="shadow-24"
-          style="width:350px; height:465px; border-radius: 10px;">
-          <q-card-section class="bg-blue-7">
-            <h4 class="text-h5 text-white q-my-md">Prijava</h4>
-            <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
-              <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="blue-4" />
-            </div>
-          </q-card-section>
-          <q-card-section>
-            <q-form ref="formRef" class="q-px-sm q-pt-xl">
+        <q-form ref="formRef">
+          <q-card
+            class="shadow-24"
+            style="width:350px; height: 470px; border-radius: 10px;">
+            <q-card-section class="bg-blue-7">
+              <h4 class="text-h5 text-white q-my-md">Prijava</h4>
+              <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
+                <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="blue-4" />
+              </div>
+            </q-card-section>
+            <q-card-section class="q-px-lg q-mt-lg">
               <q-input
-              rounded
-              v-model="formStateLogin.email"
-              type="text"
-              label="Email"
-              :rules="[required, email]">
-                <template v-slot:prepend>
-                  <q-icon name="email" />
-                </template>
+                rounded
+                v-model="formStateLogin.email"
+                type="text"
+                label="Email"
+                :rules="[required, email]">
+                  <template v-slot:prepend>
+                    <q-icon name="email" />
+                  </template>
               </q-input>
               <q-input
                 rounded
@@ -38,34 +38,44 @@
                   <q-icon name="lock" />
                 </template>
               </q-input>
-            </q-form>
-          </q-card-section>
-          <q-card-actions class="q-px-lg">
-            <q-btn
-              unelevated
-              rounded
-              size="lg"
-              color="blue-4"
-              class="full-width text-white"
-              label="Prijavi se"
-              :disable="formStateLogin.email === ''
-              || formStateLogin.password === ''
-              || isSubmitting"
-              :loading="isSubmitting"
-              @click="submitForm"
-            />
-          </q-card-actions>
-          <q-card-section>
-            <div class="text-center">
+            </q-card-section>
+            <q-card-actions class="q-px-lg">
+              <q-btn
+                unelevated
+                rounded
+                dense
+                color="blue-4"
+                class="full-width text-white q-mb-md"
+                no-caps
+                label="Prijavi se"
+                :loading="isSubmitting"
+                @click="submitForm"
+                style="font-size: 17px;"
+              />
+              <q-btn
+                outline
+                rounded
+                dense
+                color="blue-4"
+                class="full-width text-white q-mb-md"
+                no-caps
+                :icon="'img:src/assets/google.png'"
+                label="Google prijava"
+                :loading="isSubmittingGoogle"
+                @click="signInWithGoogle"
+                style="font-size: 17px;"
+              />
               <q-btn
                 flat
+                rounded
+                class="full-width text-center"
                 color="blue-4"
                 label="Nemate račun? Registrirajte se!"
                 @click="() => router.push({ name: 'RegisterPage' })"
               />
-            </div>
-          </q-card-section>
-        </q-card>
+            </q-card-actions>
+          </q-card>
+        </q-form>
       </div>
     </div>
   </q-page>
@@ -77,21 +87,44 @@ import { useRouter } from 'vue-router';
 import { Notify, QForm } from 'quasar';
 import { useUserStore } from 'src/stores/UserStore';
 import { useValidation } from 'src/composables';
-import { authApi } from 'src/services/api';
+import { authApi, GoogleLoginRequest } from 'src/services/api';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from 'src/firebaseConfig';
 
 const router = useRouter();
 const userStore = useUserStore();
 const { required, email, password } = useValidation();
 
-const formRef: Ref<QForm | null> = ref(null);
+const provider = new GoogleAuthProvider();
 
-const isSubmitting: Ref<boolean> = ref(false);
+const isSubmittingGoogle: Ref<boolean> = ref(false);
+
+const signInWithGoogle = async () => {
+  try {
+    isSubmittingGoogle.value = true;
+
+    const result = await signInWithPopup(auth, provider);
+    const idToken = await result.user.getIdToken();
+    const response = await authApi.googleLogin({ idToken } as GoogleLoginRequest);
+
+    const data = await response.json();
+    userStore.setCurrentUser(data);
+  } catch (error) {
+    //
+  } finally {
+    isSubmittingGoogle.value = false;
+    router.push({ name: 'HomePage' });
+  }
+};
+
+const formRef: Ref<QForm | null> = ref(null);
 
 const formStateLogin = ref({
   email: '',
   password: '',
 });
 
+const isSubmitting: Ref<boolean> = ref(false);
 const submitForm = async () => {
   if (!formRef.value) return;
 

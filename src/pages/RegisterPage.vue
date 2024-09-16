@@ -8,15 +8,14 @@
     <div class="column q-pa-lg">
       <div class="row">
         <q-form ref="formRef">
-        <q-card class="shadow-24" style="width:350px; height:610px; border-radius: 10px;">
-          <q-card-section class="bg-blue-7">
-            <h4 class="text-h5 text-white q-my-md">Registracija</h4>
-            <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
-              <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="blue-4" />
-            </div>
-          </q-card-section>
-          <q-card-section>
-            <q-form class="q-px-sm q-pt-xl">
+          <q-card class="shadow-24" style="width:350px; height:565px; border-radius: 10px;">
+            <q-card-section class="bg-blue-7">
+              <h4 class="text-h5 text-white q-my-md">Registracija</h4>
+              <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
+                <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="blue-4" />
+              </div>
+            </q-card-section>
+            <q-card-section class="q-px-lg q-mt-lg">
               <q-input
                 dense
                 rounded
@@ -82,31 +81,31 @@
                   <q-icon name="lock" />
                 </template>
               </q-input>
-            </q-form>
-          </q-card-section>
-          <q-card-actions class="q-px-lg">
-            <q-btn
-              unelevated
-              rounded
-              size="lg"
-              color="blue-4"
-              class="full-width text-white"
-              label="Registriraj se"
-              :loading="isSubmitting"
-              @click="submitForm"
-            />
-          </q-card-actions>
-          <q-card-section class="text-center q-pa-sm">
-            <q-btn
-              flat
-              color="blue-4"
-              class="mb-sm"
-              label="Povratak na prijavu"
-              @click="() => router.push({ name: 'LoginPage' })"
-            />
-          </q-card-section>
-        </q-card>
-      </q-form>
+            </q-card-section>
+            <q-card-actions class="q-px-lg">
+              <q-btn
+                unelevated
+                rounded
+                dense
+                color="blue-4"
+                class="full-width text-white q-mb-md"
+                no-caps
+                label="Registriraj se"
+                :loading="isSubmitting"
+                @click="submitForm"
+                style="font-size: 17px;"
+              />
+              <q-btn
+                flat
+                rounded
+                class="full-width text-center"
+                color="blue-4"
+                label="Povratak na prijavu"
+                @click="() => router.push({ name: 'LoginPage' })"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-form>
       </div>
     </div>
   </q-page>
@@ -128,8 +127,6 @@ const { required, email, password } = useValidation();
 
 const formRef: Ref<QForm | null> = ref(null);
 
-const isSubmitting: Ref<boolean> = ref(false);
-
 const formStateReg = ref({
   username: '',
   fullName: '',
@@ -138,7 +135,13 @@ const formStateReg = ref({
   confirmPassword: '',
 });
 
+const isSubmitting: Ref<boolean> = ref(false);
 const submitForm = async () => {
+  if (!formRef.value) return;
+
+  const isValid = await formRef.value.validate();
+  if (!isValid) return;
+
   if (formStateReg.value.password !== formStateReg.value.confirmPassword) {
     Notify.create({
       type: 'negative',
@@ -146,10 +149,6 @@ const submitForm = async () => {
     });
     return;
   }
-  if (!formRef.value) return;
-
-  const isValid = await formRef.value.validate();
-  if (!isValid) return;
 
   try {
     isSubmitting.value = true;
