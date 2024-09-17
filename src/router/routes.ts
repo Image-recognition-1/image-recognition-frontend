@@ -20,6 +20,12 @@ const routes: RouteRecordRaw[] = [
         beforeEnter: forbidUnauthenticated,
         component: () => import('pages/ProfilePage.vue'),
       },
+      {
+        path: '/gallery',
+        name: 'GalleryPage',
+        beforeEnter: forbidUnauthenticated,
+        component: () => import('pages/GalleryPage.vue'),
+      },
     ],
   },
   {

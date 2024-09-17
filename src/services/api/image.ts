@@ -17,4 +17,8 @@ export default {
     const imageApi = new ImageApi(apiConfig);
     return imageApi.getImagesImageImagesGet();
   },
+  deleteImage(imageId: string) {
+    const imageApi = new ImageApi(apiConfig);
+    return imageApi.deleteImageImageDeleteImageImageIdDelete({ imageId });
+  },
 };

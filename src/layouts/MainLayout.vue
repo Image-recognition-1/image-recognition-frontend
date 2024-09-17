@@ -124,6 +124,7 @@ const setMenuItems = () => {
   menuItems.value = [
     { title: 'Prepoznavanje slike', to: { name: 'HomePage' }, icon: 'fa-solid fa-image' },
     { title: 'Korisnički profil', to: { name: 'ProfilePage' }, icon: 'fa-solid fa-user' },
+    { title: 'Galerija slika', to: { name: 'GalleryPage' }, icon: 'fa-solid fa-images' },
   ];
 };
 setMenuItems();
