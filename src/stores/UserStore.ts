@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import { ResponseUser } from 'src/services/api';
+import { UserRead } from 'src/services/api';
 
-const getInitialUser = (): ResponseUser => ({
+const getInitialUser = (): UserRead => ({
   uid: '',
   username: '',
   email: '',
@@ -11,11 +11,11 @@ const getInitialUser = (): ResponseUser => ({
 });
 
 export const useUserStore = defineStore('userStore', {
-  state: (): { currentUser: ResponseUser } => ({
+  state: (): { currentUser: UserRead } => ({
     currentUser: getInitialUser(),
   }),
   actions: {
-    setCurrentUser(user: ResponseUser): void {
+    setCurrentUser(user: UserRead): void {
       this.currentUser = { ...user };
     },
     clearCurrentUser(): void {

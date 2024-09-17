@@ -117,9 +117,9 @@ import { useRouter } from 'vue-router';
 import { Notify, QForm } from 'quasar';
 import { useValidation } from 'src/composables';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from 'src/firebaseConfig';
-import { doc, setDoc } from 'firebase/firestore';
+import { auth } from 'src/firebaseConfig';
 import { useUserStore } from 'src/stores/UserStore';
+import { authApi } from 'src/services/api';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -160,21 +160,21 @@ const submitForm = async () => {
     );
     const { user } = userCredential;
 
-    await setDoc(doc(db, 'users', user.uid), {
-      uid: user.uid,
-      username: formStateReg.value.username,
-      fullName: formStateReg.value.fullName,
-      email: user.email,
-      role: 'USER',
-      disabled: false,
-      createdAt: new Date().toISOString(),
-    });
-
-    userStore.setCurrentUser({
+    const userResponse = await authApi.register({
       uid: user.uid,
       email: user.email || '',
       username: formStateReg.value.username,
+      password: formStateReg.value.password,
       fullName: formStateReg.value.fullName,
+      role: 'USER',
+      disabled: false,
+    });
+
+    userStore.setCurrentUser({
+      uid: userResponse.uid,
+      email: userResponse.email || '',
+      username: userResponse.username,
+      fullName: userResponse.fullName,
       role: 'USER',
       disabled: false,
     });

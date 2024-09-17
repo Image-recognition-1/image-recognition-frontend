@@ -1,30 +1,30 @@
 import { apiConfig } from '../../boot/apiConfig';
 import {
-  LoginLoginPostRequest, DefaultApi, RegisterRequest, GoogleLoginRequest,
+  // API
+  AuthApi,
+  // models
+  LoginAuthLoginPostRequest,
+  RegisterRequest,
+  GoogleLoginRequest,
 } from '../../../schemas/generated-api';
 
-export type { GoogleLoginRequest, RegisterRequest, LoginLoginPostRequest };
+export type { GoogleLoginRequest, RegisterRequest, LoginAuthLoginPostRequest };
 
 export default {
-  login(requestParams: LoginLoginPostRequest) {
-    const authApi = new DefaultApi(apiConfig);
-    return authApi.loginLoginPost(requestParams);
+  login(requestParams: LoginAuthLoginPostRequest) {
+    const authApi = new AuthApi(apiConfig);
+    return authApi.loginAuthLoginPost(requestParams);
   },
   register(registerRequest: RegisterRequest) {
-    const authApi = new DefaultApi(apiConfig);
-    return authApi.registerUserRegisterPost({ registerRequest });
+    const authApi = new AuthApi(apiConfig);
+    return authApi.registerUserAuthRegisterPost({ registerRequest });
   },
   googleLogin(googleLoginRequest: GoogleLoginRequest) {
-    const authApi = new DefaultApi(apiConfig);
-    return authApi.googleLoginGoogleLoginPost({ googleLoginRequest });
-  },
-
-  getMe() {
-    const authApi = new DefaultApi(apiConfig);
-    return authApi.getMeGetmeGet();
+    const authApi = new AuthApi(apiConfig);
+    return authApi.googleLoginAuthGoogleLoginPost({ googleLoginRequest });
   },
   logout() {
-    const authApi = new DefaultApi(apiConfig);
-    return authApi.logoutLogoutGet();
+    const authApi = new AuthApi(apiConfig);
+    return authApi.logoutAuthLogoutGet();
   },
 };

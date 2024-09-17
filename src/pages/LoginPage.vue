@@ -87,7 +87,7 @@ import { useRouter } from 'vue-router';
 import { Notify, QForm } from 'quasar';
 import { useUserStore } from 'src/stores/UserStore';
 import { useValidation } from 'src/composables';
-import { authApi, GoogleLoginRequest } from 'src/services/api';
+import { authApi, GoogleLoginRequest, userApi } from 'src/services/api';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from 'src/firebaseConfig';
 
@@ -138,8 +138,13 @@ const submitForm = async () => {
       password: formStateLogin.value.password,
     });
 
-    const response = await authApi.getMe();
+    const response = await userApi.getMe();
     userStore.setCurrentUser(response);
+
+    Notify.create({
+      type: 'positive',
+      message: 'Uspješno ste se prijavili.',
+    });
 
     router.push({ name: 'HomePage' });
   } catch (error) {

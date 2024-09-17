@@ -1,23 +1,22 @@
 import { apiConfig } from '../../boot/apiConfig';
 import {
   // APIs
-  DefaultApi,
+  UserApi,
   // Models
-  RegisterRequest,
-  ResponseUser,
+  UserRead,
   UpdateUserRequest,
 } from '../../../schemas/generated-api';
 
-export type { ResponseUser };
+export type { UserRead };
 
 export default {
-  createUser(user: RegisterRequest) {
-    const userApi = new DefaultApi(apiConfig);
-    return userApi.registerUserRegisterPost({ registerRequest: user });
+  getMe() {
+    const userApi = new UserApi(apiConfig);
+    return userApi.getMeUserGetmeGet();
   },
   updateUser(uid: string, updateUserRequest: UpdateUserRequest) {
-    const userApi = new DefaultApi(apiConfig);
-    return userApi.updateUserUpdateUserUidPut({ uid, updateUserRequest });
+    const userApi = new UserApi(apiConfig);
+    return userApi.updateUserUserUpdateUserUidPut({ uid, updateUserRequest });
   },
 
 };

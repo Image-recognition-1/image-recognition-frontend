@@ -4,11 +4,11 @@
         <div class="text-h4 q-pl-xl q-mt-md">{{ "Uredi profil" }}</div>
     </div>
     <div class="row justify-center">
-      <q-card rounded class="shadow-11" style="width: 75%;">
-      <q-form ref="formRef" class="q-pa-md">
+      <q-card rounded class="shadow-11 q-pa-lg" style="width: 75%; border-radius: 10px;">
+      <q-form ref="formRef">
         <label class="q-ml-md">Ime i prezime</label>
         <q-input
-          class="q-mb-sm"
+          class="q-mb-sm q-pt-xs"
           outlined
           dense
           clearable
@@ -20,9 +20,9 @@
             <q-icon name="person" />
           </template>
         </q-input>
-        <label class="q-ml-md">Emal</label>
+        <label class="q-ml-md">Email</label>
         <q-input
-          class="q-mb-sm"
+          class="q-mb-sm q-pt-xs"
           dense
           outlined
           clearable
@@ -37,7 +37,7 @@
         <label class="q-ml-md">Korisničko ime</label>
         <q-input
           dense
-          class="q-mb-sm"
+          class="q-mb-sm q-pt-xs"
           outlined
           clearable
           v-model="formStateUpdate.username"
@@ -48,39 +48,12 @@
             <q-icon name="person" />
           </template>
         </q-input>
-        <label class="q-ml-md">Lozinka</label>
-        <q-input
-          dense
-          class="q-mb-sm"
-          outlined
-          clearable
-          v-model="formStateUpdate.password"
-          type="password"
-          :rules="[required, password]"
-        >
-          <template v-slot:prepend>
-            <q-icon name="lock" />
-          </template>
-        </q-input>
-        <label class="q-ml-md">Potvrda lozinke</label>
-        <q-input
-          dense
-          class="q-mb-sm"
-          outlined
-          clearable
-          v-model="formStateUpdate.confirmPassword"
-          type="password"
-          :rules="[required]"
-        >
-          <template v-slot:prepend>
-            <q-icon name="lock" />
-          </template>
-        </q-input>
+
         <label class="q-ml-md">Uloga</label>
         <q-select
           v-model="formStateUpdate.role"
           outlined
-          class="q-mb-md"
+          class="q-mb-md q-pt-xs"
           dense
           :disable="userStore.currentUser.role !== 'ADMIN'"
           options-dense
@@ -88,6 +61,7 @@
         <q-btn
           dense
           unelevated
+          rounded
           size="md"
           color="primary"
           class="full-width text-white q-my-md"
@@ -113,7 +87,7 @@ import { useUserStore } from 'src/stores/UserStore';
 const formRef: Ref<QForm | null> = ref(null);
 const isSubmitting: Ref<boolean> = ref(false);
 
-const { required, email, password } = useValidation();
+const { required, email } = useValidation();
 const userStore = useUserStore();
 
 const formStateUpdate = ref({

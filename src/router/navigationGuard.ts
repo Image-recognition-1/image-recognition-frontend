@@ -1,14 +1,14 @@
 import { useUserStore } from 'src/stores/UserStore';
 import { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
-import { authApi, ResponseUser } from 'src/services/api';
+import { userApi, UserRead } from 'src/services/api';
 
 export const forbidUnauthenticated = async (to: RouteLocationNormalized) => {
   const userStore = useUserStore();
 
   if (!userStore.currentUser.email) {
     try {
-      const user = await authApi.getMe();
-      userStore.setCurrentUser(user as ResponseUser);
+      const user = await userApi.getMe();
+      userStore.setCurrentUser(user as UserRead);
     } catch (err) {
       return { name: 'LoginPage' } as NavigationGuardNext | boolean;
     }
@@ -30,8 +30,8 @@ export const forbidAuthenticated = async (
   if (userStore.currentUser.username) return from.name ? false : ({ name: 'HomePage' } as NavigationGuardNext | boolean);
 
   try {
-    const user = await authApi.getMe();
-    userStore.setCurrentUser(user as ResponseUser);
+    const user = await userApi.getMe();
+    userStore.setCurrentUser(user as UserRead);
     return from.name ? false : ({ name: 'HomePage' } as NavigationGuardNext | boolean);
   } catch (err) {
     return true;
