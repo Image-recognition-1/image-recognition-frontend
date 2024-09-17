@@ -138,8 +138,8 @@ const submitForm = async () => {
       password: formStateLogin.value.password,
     });
 
-    // const response = await authApi.getMe();
-    // userStore.setCurrentUser(response);
+    const response = await authApi.getMe();
+    userStore.setCurrentUser(response);
 
     router.push({ name: 'HomePage' });
   } catch (error) {
