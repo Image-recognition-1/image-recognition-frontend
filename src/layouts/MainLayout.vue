@@ -78,7 +78,7 @@
             @click="toggleLeftDrawer"
           >
             <q-item-section avatar>
-              <q-icon :name="menuItem.icon" size="sm" color="primary" />
+              <q-icon :name="menuItem.icon" size="sm" color="primary" class="q-mx-md" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ menuItem.title }}</q-item-label>
@@ -122,7 +122,7 @@ const userStore = useUserStore();
 const menuItems: Ref<{ title: string; to: { name: string }; icon: string }[]> = ref([]);
 const setMenuItems = () => {
   menuItems.value = [
-    { title: 'Prepoznavanje slike', to: { name: 'HomePage' }, icon: 'fa-solid fa-image' },
+    { title: 'Prepoznavanje slike', to: { name: 'HomePage' }, icon: 'fa-solid fa-cloud-arrow-up' },
     { title: 'Korisnički profil', to: { name: 'ProfilePage' }, icon: 'fa-solid fa-user' },
     { title: 'Galerija slika', to: { name: 'GalleryPage' }, icon: 'fa-solid fa-images' },
   ];

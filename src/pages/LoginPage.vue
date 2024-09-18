@@ -105,10 +105,9 @@ const signInWithGoogle = async () => {
 
     const result = await signInWithPopup(auth, provider);
     const idToken = await result.user.getIdToken();
-    const response = await authApi.googleLogin({ idToken } as GoogleLoginRequest);
+    const user = await authApi.googleLogin({ idToken } as GoogleLoginRequest);
 
-    const data = await response.json();
-    userStore.setCurrentUser(data);
+    userStore.setCurrentUser(user);
   } catch (error) {
     //
   } finally {

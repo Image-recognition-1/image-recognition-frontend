@@ -16,6 +16,7 @@
             outlined
             use-chips
             clearable
+            :disable="isSubmitting"
             accept="image/*"
             max-file-size="5120000"
             @update:model-value="onImageAdded([file as File])"
@@ -29,26 +30,39 @@
           <div class="row justify-center q-pa-md">
             <q-img
               :src="uploadedImage"
-              style="width: 100%; border-radius: 10px;" />
+              spinner-color="primary"
+              :width="uploadedImage !== 'src/assets/upload-img.png' ? '480px' : '250px'"
+              style="border-radius: 10px;" />
           </div>
         </q-card-section>
         <q-card-actions align="center">
           <q-btn
+            v-if="!isSubmitting"
             label="Pošalji sliku"
             color="primary"
+            class="q-mb-md"
             unelevated
             rounded
             @click="uploadImage"
             :disable="!file"
-            :loading="isSubmitting"
           />
+          <div v-if="isSubmitting" class="flex flex-center">
+            <q-circular-progress
+              indeterminate
+              size="80px"
+              :thickness="0.6"
+              color="primary"
+              center-color="grey-8"
+              class="q-ma-md"
+            />
+          </div>
         </q-card-actions>
+        <q-separator v-if="!results" />
         <q-card-section>
           <div v-if="!results" class="text-h5 text-center">
               Rezultati predikcije
           </div>
-
-          <template v-for="(value, key) in results" :key="key">
+          <template v-for="(value, key) in results.predictions" :key="key">
             <div class="row-container">
               <div class="key-name">{{ key }}
                 <span class="text-weight-bold">{{ (value * 100).toFixed(2) }}%</span>
