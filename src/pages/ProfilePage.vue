@@ -5,76 +5,102 @@
     </div>
     <div class="row justify-center">
       <q-card rounded class="shadow-11 q-pa-lg" style="width: 75%; border-radius: 10px;">
-      <q-form ref="formRef">
-        <label class="q-ml-md">Ime i prezime</label>
-        <q-input
-          class="q-mb-sm q-pt-xs"
-          outlined
-          dense
-          clearable
-          v-model="formStateUpdate.fullName"
-          type="text"
-          :rules="[required]"
-        >
-          <template v-slot:prepend>
-            <q-icon name="person" />
-          </template>
-        </q-input>
-        <label class="q-ml-md">Email</label>
-        <q-input
-          class="q-mb-sm q-pt-xs"
-          dense
-          outlined
-          clearable
-          v-model="formStateUpdate.email"
-          type="email"
-          :rules="[required, email]"
-        >
-          <template v-slot:prepend>
-            <q-icon name="email" />
-          </template>
-        </q-input>
-        <label class="q-ml-md">Korisničko ime</label>
-        <q-input
-          dense
-          class="q-mb-sm q-pt-xs"
-          outlined
-          clearable
-          v-model="formStateUpdate.username"
-          type="text"
-          :rules="[required]"
-        >
-          <template v-slot:prepend>
-            <q-icon name="person" />
-          </template>
-        </q-input>
-
-        <label class="q-ml-md">Uloga</label>
-        <q-select
-          v-model="formStateUpdate.role"
-          outlined
-          class="q-mb-md q-pt-xs"
-          dense
-          :disable="userStore.currentUser.role !== 'ADMIN'"
-          options-dense
-          :options="['GUEST', 'USER', 'ADMIN', ]" />
-        <q-btn
-          dense
-          unelevated
-          rounded
-          size="md"
-          color="primary"
-          class="full-width text-white q-my-md"
-          label="Spremi promjene"
-          :disable="isSubmitting"
-          :loading="isSubmitting"
-          @click="submitForm"
-        />
-      </q-form>
-    </q-card>
+        <div class="container">
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            @change="openImagePicker"
+            style="display: none;"
+          />
+          <q-btn round>
+            <q-img
+              class="image"
+              :src="image"
+              :ratio="1"
+            />
+            <div class="overlay flex flex-center">
+              <q-icon
+                name="fa-solid fa-camera"
+                size="50px"
+                color="black"
+              />
+            </div>
+          </q-btn>
+        </div>
+        <q-form ref="formRef">
+          <label class="q-ml-md">Ime i prezime</label>
+          <q-input
+            class="q-mb-sm q-pt-xs"
+            outlined
+            rounded
+            dense
+            clearable
+            v-model="formStateUpdate.fullName"
+            type="text"
+            :rules="[required]"
+          >
+            <template v-slot:prepend>
+              <q-icon name="person" />
+            </template>
+          </q-input>
+          <label class="q-ml-md">Email</label>
+          <q-input
+            class="q-mb-sm q-pt-xs"
+            dense
+            outlined
+            rounded
+            clearable
+            v-model="formStateUpdate.email"
+            type="email"
+            :rules="[required, email]"
+          >
+            <template v-slot:prepend>
+              <q-icon name="email" />
+            </template>
+          </q-input>
+          <label class="q-ml-md">Korisničko ime</label>
+          <q-input
+            dense
+            class="q-mb-sm q-pt-xs"
+            outlined
+            rounded
+            clearable
+            v-model="formStateUpdate.username"
+            type="text"
+            :rules="[required]"
+          >
+            <template v-slot:prepend>
+              <q-icon name="person" />
+            </template>
+          </q-input>
+          <label class="q-ml-md">Uloga</label>
+          <q-select
+            v-model="formStateUpdate.role"
+            outlined
+            rounded
+            class="q-mb-md q-pt-xs"
+            dense
+            :disable="userStore.currentUser.role !== 'ADMIN'"
+            options-dense
+            :options="['GUEST', 'USER', 'ADMIN', ]"
+          />
+          <q-btn
+            dense
+            unelevated
+            rounded
+            size="md"
+            color="primary"
+            class="full-width text-white q-my-md"
+            label="Spremi promjene"
+            :disable="isSubmitting"
+            :loading="isSubmitting"
+            @click="submitForm"
+          />
+        </q-form>
+      </q-card>
     </div>
-
-    </q-page>
+  </q-page>
 </template>
 
 <script setup lang="ts">
@@ -89,6 +115,26 @@ const isSubmitting: Ref<boolean> = ref(false);
 
 const { required, email } = useValidation();
 const userStore = useUserStore();
+
+const image = ref('https://i.pravatar.cc/300');
+
+const openImagePicker = () => {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.click();
+
+  fileInput.onchange = () => {
+    const file = fileInput.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        image.value = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+};
 
 const formStateUpdate = ref({
   fullName: userStore.currentUser.fullName,
@@ -137,3 +183,43 @@ const submitForm = async () => {
 };
 
 </script>
+
+<style lang="css" scoped>
+.q-form {
+  margin-top: -90px;
+}
+.container {
+  position: relative;
+  width: fit-content;
+  margin: 0 auto;
+  transform: translateY(-50%);
+}
+
+.image {
+  display: block;
+  height: 200px;
+  width: 200px;
+  height: auto;
+  border-radius: 50%;
+  border: 2px solid var(--q-primary);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  border-radius: 50%;
+  transition: .5s ease;
+  background-color: var(--q-secondary);
+}
+
+.container:hover .overlay {
+  opacity: 0.7;
+  border-radius: 50%;
+}
+</style>
