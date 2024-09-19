@@ -14,7 +14,9 @@
             <q-card-section class="bg-blue-7">
               <h4 class="text-h5 text-white q-my-md">Prijava</h4>
               <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
-                <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="blue-4" />
+                <q-avatar color="blue-4" size="60px">
+                  <q-icon name="fa-solid fa-arrow-right-to-bracket" color="white"/>
+                </q-avatar>
               </div>
             </q-card-section>
             <q-card-section class="q-px-lg q-mt-lg">
@@ -143,6 +145,7 @@ const submitForm = async () => {
     Notify.create({
       type: 'positive',
       message: 'Uspješno ste se prijavili.',
+      icon: 'fa-solid fa-check',
     });
 
     router.push({ name: 'HomePage' });
@@ -150,6 +153,7 @@ const submitForm = async () => {
     Notify.create({
       type: 'negative',
       message: 'Netočni podaci za prijavu.',
+      icon: 'warning',
     });
   } finally {
     isSubmitting.value = false;

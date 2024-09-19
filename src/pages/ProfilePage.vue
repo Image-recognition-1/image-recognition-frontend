@@ -164,11 +164,13 @@ const submitForm = async () => {
     Notify.create({
       message: 'Profil uspješno ažuriran',
       color: 'positive',
+      icon: 'fa-solid fa-check',
     });
   } catch (error) {
     Notify.create({
       message: 'Došlo je do pogreške',
       color: 'negative',
+      icon: 'warning',
     });
   } finally {
     isSubmitting.value = false;

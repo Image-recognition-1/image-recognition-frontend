@@ -142,6 +142,7 @@ const logout = async () => {
     Notify.create({
       type: 'positive',
       message: 'Uspješno ste se odjavili.',
+      icon: 'fa-solid fa-check',
     });
 
     router.push({ name: 'LoginPage' });

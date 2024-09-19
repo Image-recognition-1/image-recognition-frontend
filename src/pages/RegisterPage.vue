@@ -8,14 +8,16 @@
     <div class="column q-pa-lg">
       <div class="row">
         <q-form ref="formRef">
-          <q-card class="shadow-24" style="width:350px; height:565px; border-radius: 10px;">
+          <q-card class="shadow-24" style="width:350px; height:fit-content; border-radius: 10px;">
             <q-card-section class="bg-blue-7">
               <h4 class="text-h5 text-white q-my-md">Registracija</h4>
               <div class="absolute-bottom-right q-pr-md" style="transform: translateY(50%);">
-                <q-btn fab icon="fa-solid fa-arrow-right-to-bracket" color="blue-4" />
+                <q-avatar color="blue-4" size="60px">
+                  <q-icon name="fa-solid fa-arrow-right-to-bracket" color="white"/>
+                </q-avatar>
               </div>
             </q-card-section>
-            <q-card-section class="q-px-lg q-mt-lg">
+            <q-card-section class="q-px-lg q-mt-lg q-gutter-sm">
               <q-input
                 dense
                 rounded
@@ -82,7 +84,7 @@
                 </template>
               </q-input>
             </q-card-section>
-            <q-card-actions class="q-px-lg">
+            <q-card-actions class="q-px-lg q-pb-md">
               <q-btn
                 unelevated
                 rounded
@@ -146,6 +148,7 @@ const submitForm = async () => {
     Notify.create({
       type: 'negative',
       message: 'Lozinke se ne podudaraju.',
+      icon: 'warning',
     });
     return;
   }
@@ -185,11 +188,13 @@ const submitForm = async () => {
     Notify.create({
       type: 'positive',
       message: 'Registracija uspješna!',
+      icon: 'fa-solid fa-check',
     });
   } catch (error) {
     Notify.create({
       type: 'negative',
       message: 'Došlo je do greške. Pokušajte ponovo.',
+      icon: 'warning',
     });
   } finally {
     isSubmitting.value = false;
