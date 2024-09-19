@@ -1,22 +1,25 @@
 <template>
   <q-page padding>
-    <div class="row justify-between items-center q-mb-md">
+    <div class="row justify-between items-center q-mb-xl">
         <div class="text-h4 q-pl-xl q-mt-md">{{ "Uredi profil" }}</div>
     </div>
     <div class="row justify-center">
-      <q-card rounded class="shadow-11 q-pa-lg" style="width: 75%; border-radius: 10px;">
+      <q-card
+        rounded
+        class="shadow-11 q-py-lg q-px-xl q-mb-xl"
+        style="width: 70%; border-radius: 10px;"
+        >
         <div class="container">
           <input
             ref="fileInput"
             type="file"
             accept="image/*"
-            @change="openImagePicker"
             style="display: none;"
           />
-          <q-btn round>
+          <q-btn round @click="openImagePicker">
             <q-img
               class="image"
-              :src="image"
+              :src="formStateUpdate.profilePictureUrl"
               :ratio="1"
             />
             <div class="overlay flex flex-center">
@@ -31,7 +34,7 @@
         <q-form ref="formRef">
           <label class="q-ml-md">Ime i prezime</label>
           <q-input
-            class="q-mb-sm q-pt-xs"
+            class="q-pt-xs"
             outlined
             rounded
             dense
@@ -39,14 +42,10 @@
             v-model="formStateUpdate.fullName"
             type="text"
             :rules="[required]"
-          >
-            <template v-slot:prepend>
-              <q-icon name="person" />
-            </template>
-          </q-input>
+          />
           <label class="q-ml-md">Email</label>
           <q-input
-            class="q-mb-sm q-pt-xs"
+            class="q-pt-xs"
             dense
             outlined
             rounded
@@ -54,36 +53,29 @@
             v-model="formStateUpdate.email"
             type="email"
             :rules="[required, email]"
-          >
-            <template v-slot:prepend>
-              <q-icon name="email" />
-            </template>
-          </q-input>
+          />
           <label class="q-ml-md">Korisničko ime</label>
           <q-input
             dense
-            class="q-mb-sm q-pt-xs"
+            class="q-pt-xs"
             outlined
             rounded
             clearable
             v-model="formStateUpdate.username"
             type="text"
             :rules="[required]"
-          >
-            <template v-slot:prepend>
-              <q-icon name="person" />
-            </template>
-          </q-input>
+          />
           <label class="q-ml-md">Uloga</label>
           <q-select
             v-model="formStateUpdate.role"
             outlined
             rounded
-            class="q-mb-md q-pt-xs"
+            class="q-pt-xs"
             dense
             :disable="userStore.currentUser.role !== 'ADMIN'"
             options-dense
             :options="['GUEST', 'USER', 'ADMIN', ]"
+            :rules="[() => true]"
           />
           <q-btn
             dense
@@ -110,13 +102,22 @@ import { userApi } from 'src/services/api';
 import { useValidation } from 'src/composables';
 import { useUserStore } from 'src/stores/UserStore';
 
+const imageFile: Ref<File | undefined> = ref();
+
 const formRef: Ref<QForm | null> = ref(null);
 const isSubmitting: Ref<boolean> = ref(false);
 
 const { required, email } = useValidation();
 const userStore = useUserStore();
 
-const image = ref('https://i.pravatar.cc/300');
+const formStateUpdate = ref({
+  fullName: userStore.currentUser.fullName,
+  email: userStore.currentUser.email,
+  username: userStore.currentUser.username,
+  role: userStore.currentUser.role,
+  disabled: userStore.currentUser.disabled,
+  profilePictureUrl: userStore.currentUser.profilePictureUrl,
+});
 
 const openImagePicker = () => {
   const fileInput = document.createElement('input');
@@ -127,24 +128,16 @@ const openImagePicker = () => {
   fileInput.onchange = () => {
     const file = fileInput.files?.[0];
     if (file) {
+      imageFile.value = file;
+
       const reader = new FileReader();
       reader.onload = () => {
-        image.value = reader.result as string;
+        formStateUpdate.value.profilePictureUrl = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
   };
 };
-
-const formStateUpdate = ref({
-  fullName: userStore.currentUser.fullName,
-  email: userStore.currentUser.email,
-  username: userStore.currentUser.username,
-  password: '',
-  confirmPassword: '',
-  role: userStore.currentUser.role,
-  disabled: userStore.currentUser.disabled,
-});
 
 const submitForm = async () => {
   if (!formRef.value) return;
@@ -152,21 +145,21 @@ const submitForm = async () => {
   const isValid = await formRef.value.validate();
   if (!isValid) return;
 
-  if (formStateUpdate.value.password !== formStateUpdate.value.confirmPassword) {
-    Notify.create({
-      message: 'Lozinke se ne podudaraju',
-      color: 'negative',
-    });
-    isSubmitting.value = false;
-    return;
-  }
   try {
     isSubmitting.value = true;
+
+    if (imageFile.value) {
+      await userApi.updateProfilePicture(
+        userStore.currentUser.uid,
+        imageFile.value,
+      );
+    }
 
     const response = await userApi.updateUser(
       userStore.currentUser.uid,
       formStateUpdate.value,
     );
+
     userStore.setCurrentUser(response);
     Notify.create({
       message: 'Profil uspješno ažuriran',

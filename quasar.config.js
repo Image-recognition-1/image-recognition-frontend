@@ -39,7 +39,7 @@ module.exports = configure((/* ctx */) => ({
     // 'line-awesome',
     // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-    'roboto-font', // optional, you are not bound to it
+    // 'roboto-font', // optional, you are not bound to it
     'material-icons', // optional, you are not bound to it
   ],
 
@@ -196,7 +196,7 @@ module.exports = configure((/* ctx */) => ({
     builder: {
       // https://www.electron.build/configuration/configuration
 
-      appId: 'airplane-manage',
+      appId: 'image-recognition',
     },
   },
 

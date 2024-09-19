@@ -22,7 +22,8 @@
           {{ userStore.currentUser.fullName }}
           <q-avatar class="q-ml-sm" rounded>
               <q-img
-                  :src="'https://i.pravatar.cc/300'"
+                  :src="userStore.currentUser.profilePictureUrl"
+                  :ratio="1"
                   :img-style="{ border: '2px solid #FFF', borderRadius: '50%' }"
               />
           </q-avatar>
@@ -34,7 +35,7 @@
               <q-card flat class="bg-transparent text-white">
                   <q-card-section>
                       <q-img
-                          :src="'https://i.pravatar.cc/300'"
+                          :src="userStore.currentUser.profilePictureUrl"
                           class="q-mb-md"
                       />
                       <strong>{{ 'uid' }}:</strong>
@@ -89,7 +90,8 @@
           <q-item-section avatar>
               <q-avatar rounded>
                   <q-img
-                      :src="'https://i.pravatar.cc/300'"
+                      :src="userStore.currentUser.profilePictureUrl"
+                      :ratio="1"
                       :img-style="{ border: '1px solid #000', borderRadius: '50%' }"
                   />
               </q-avatar>

@@ -8,6 +8,7 @@ const getInitialUser = (): UserRead => ({
   fullName: '',
   role: '',
   disabled: false,
+  profilePictureUrl: '',
 });
 
 export const useUserStore = defineStore('userStore', {
