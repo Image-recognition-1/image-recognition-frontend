@@ -177,6 +177,7 @@ const submitForm = async () => {
       fullName: userResponse.fullName,
       role: 'USER',
       disabled: false,
+      profilePictureUrl: userResponse.profilePictureUrl,
     });
 
     router.push({ name: 'HomePage' });
