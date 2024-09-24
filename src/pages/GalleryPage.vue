@@ -1,10 +1,10 @@
 <template>
   <q-page padding>
-    <div class="row justify-between items-center q-mb-md">
-      <div class="text-h4 q-pl-xl q-mt-md">Galerija</div>
+    <div class="q-ma-md">
+      <div class="text-h4 q-pl-xl">Galerija</div>
     </div>
-    <div class="row justify-center q-gutter-lg">
-      <div v-for="image in images" :key="image.id">
+    <div class="wrapper">
+      <template v-for="image in images" :key="image.id">
         <div
           class="container shadow-3"
           @click="openImageModal(image)">
@@ -23,7 +23,7 @@
             <div class="text-caption">Image <i>{{ image.filename }}</i></div>
           </q-tooltip>
         </div>
-      </div>
+      </template>
     </div>
   </q-page>
 </template>
@@ -72,13 +72,25 @@ function openImageModal(image: ImagesRead) {
 </script>
 
 <style lang="scss" scoped>
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 220px);
+  place-content: center;
+  place-items: center;
+  gap: 25px;
+  padding: 16px 0;
+}
+
 .container {
   width: 200px;
   height: 200px;
   overflow: hidden;
   border-radius: 10px;
+  border: 3px solid white;
   box-shadow: 3px 3px 6px 0px rgba(40, 40, 40, 0.5);
   position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
 .image {
@@ -90,7 +102,7 @@ function openImageModal(image: ImagesRead) {
 }
 
 .container:hover .image {
-  transform: scale(1.05);
+  transform: scale(1.1);
   filter: brightness(1.2);
 }
 

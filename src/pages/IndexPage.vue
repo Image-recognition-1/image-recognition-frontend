@@ -45,6 +45,7 @@
             rounded
             @click="uploadImage"
             :disable="!file"
+            style="width: 200px;"
           />
           <div v-if="isSubmitting" class="flex flex-center">
             <q-circular-progress
@@ -62,7 +63,7 @@
           <div v-if="!results" class="text-h5 text-center">
               Rezultati predikcije
           </div>
-          <template v-for="(value, key) in results.predictions" :key="key">
+          <template v-for="(value, key) in results" :key="key">
             <div class="row-container">
               <div class="key-name">{{ key }}
                 <span class="text-weight-bold">{{ (value * 100).toFixed(2) }}%</span>
@@ -91,6 +92,10 @@ const uploadedImage = ref<string | null>('src/assets/upload-img.png');
 
 const results = ref<{ [key: string]: number }>({});
 
+function formatKey(key: string) {
+  return key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char);
+}
+
 const onImageAdded = (files: File[]) => {
   if (!files[0]) {
     uploadedImage.value = 'src/assets/upload-img.png';
@@ -115,8 +120,13 @@ const uploadImage = async () => {
 
     isSubmitting.value = true;
     try {
-      const response = await imageApi.uploadImage(file.value as File);
-      results.value = response;
+      const { predictions } = await imageApi.uploadImage(file.value as File);
+      results.value = Object.keys(predictions).reduce((acc, key) => {
+        const formattedKey = formatKey(key);
+        const value = predictions[key];
+        acc[formattedKey] = value;
+        return acc;
+      }, {} as { [key: string]: number });
     } catch (error) {
       //
     } finally {

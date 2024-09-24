@@ -10,12 +10,18 @@
           icon="fa-solid fa-x"
           @click="onDialogCancel" />
       </q-card-actions>
-      <q-card-section class="scroll flex flex-center q-gutter-md" style="max-height: 85vh;">
-        <div>
-          <q-img :src="props.image.imageUrl" class="image" width="450px" :ratio="1" />
+      <q-card-section
+        class="scroll flex flex-center section-wrapper"
+        style="max-height: 85vh;">
+        <div class="left-side">
+          <q-img
+            :src="props.image.imageUrl"
+            class="image"
+            :ratio="1"
+          />
         </div>
-        <div class="q-pa-md wrapper">
-          <q-list separator padding>
+        <div class="right-side">
+          <q-list separator class="q-pa-sm">
             <q-item clickable>
               <q-item-section avatar>
                 <q-icon color="primary" name="fa-solid fa-hashtag" />
@@ -46,6 +52,7 @@
               </q-item-section>
             </q-item>
           </q-list>
+          <div class="full-width">
           <template v-for="(value, key) in props.image.predictions" :key="key">
             <div class="row-container">
               <div class="key-name">{{ key }}
@@ -61,15 +68,19 @@
             </div>
           </template>
         </div>
+        </div>
+      </q-card-section>
+      <q-card-actions align="center">
         <q-btn
           color="red"
           rounded
           unelevated
+          style="width: 200px;"
           label="Obriši"
           icon="fa-solid fa-trash"
           @click="openConfirmationDialog(props.image.id)"
         />
-      </q-card-section>
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
@@ -112,31 +123,45 @@ function openConfirmationDialog(imageId: string) {
 
 <style lang="scss" scoped>
 .container {
-  max-width: 800px;
+  max-width: 950px;
   width: 100%;
   background-color: var(--q-primary);
   border-radius: 10px;
 }
 
-.image {
-  width: 100%;
-  border-radius: 10px;
-  border: 3px solid white;
+.section-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0;
 }
 
-.wrapper {
+.left-side {
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  display: grid;
+}
+.image {
+  border-radius: 10px;
+  border: 3px solid white;
+  width: 100%;
+  max-width: 450px;
+  height: auto;
+  padding: 0;
+}
+
+.right-side {
   background-color: white;
   border-radius: 10px;
-  margin-left: 12px;
   height: fit-content;
   display: grid;
-  place-content: center;
+  margin: 12px;
 }
 
 .row-container {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  padding: 12px;
 }
 
 .key-name {
@@ -156,7 +181,7 @@ function openConfirmationDialog(imageId: string) {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-left: 10px;
+  padding-left: 8px;
   color: white;
 }
 
